@@ -23,6 +23,29 @@ LIBS = -lpcap -lm  -lncursesw -lpthread
 
 
 
+## オブジェクトファイル生成
+
+[o] addr_hash.c
+[o] edline.c hash.c
+[ ] iftop.c <pcap.h>が見つからないと怒られるので後回し
+[o] ns_hash.c
+[o] options.c
+[ ] resolver.c
+[ ] screenfilter.c
+[ ] serv_hash.c
+[ ] sorted_list.c
+[ ] threadprof.c
+[ ] ui.c
+[ ] util.c
+[ ] addrs_ioctl.c
+[ ] addrs_dlpi.c
+[ ] dlcommon.c
+[ ] stringmap.c
+[ ] cfgfile.c
+[ ] vector.c
+
+
+
 # 履歴
 
 config/config.guessで止まる。
