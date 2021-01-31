@@ -20,9 +20,9 @@
 
 #if defined __FreeBSD__ || defined __OpenBSD__ || defined __APPLE__ \
       || ( defined __GNUC__ && ! defined __linux__ )
-#include <sys/param.h>
-#include <sys/sysctl.h>
-#include <net/if_dl.h>
+//#include <sys/param.h>
+//#include <sys/sysctl.h>
+//#include <net/if_dl.h>
 #endif
 
 #ifdef USE_GETIFADDRS
