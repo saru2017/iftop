@@ -47,6 +47,8 @@
 #include "ethertype.h"
 #include "cfgfile.h"
 #include "ppp.h"
+#include "addrs_ioctl.h"
+#include "options.h"
 
 #include <netinet/ip6.h>
 

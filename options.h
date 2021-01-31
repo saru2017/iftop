@@ -93,5 +93,7 @@ typedef struct {
 
 void options_set_defaults();
 void options_read(int argc, char **argv);
+void options_read_args(int argc, char **argv);
+void options_make();
 
 #endif /* __OPTIONS_H_ */
