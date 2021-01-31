@@ -6,8 +6,8 @@ gcc -c dlcommon.c -o dlcommon.o
 gcc -c edline.c -o edline.o
 gcc -c hash.c -o hash.o
 gcc -c hostentp_ghba_r.c -o hostentp_ghba_r.o
-gcc -c iftop.c -o iftop.o
-gcc -c int_ghba_r.c int_ghba_r.o
+gcc -c iftop.c -o iftop.o -I./include
+gcc -c int_ghba_r.c -o int_ghba_r.o
 gcc -c ns_hash.c -o ns_hash.o
 gcc -c options.c -o options.o
 gcc -c pthread.c -o pthread.o
