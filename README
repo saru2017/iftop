@@ -1,5 +1,0 @@
-# README for iftop-cygwin
-
-Forked for porting to cygwin.
-This project is not completed.
-I'will use libwpcap (WpdPack_4_1_2) as libpcap.
