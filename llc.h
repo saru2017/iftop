@@ -18,7 +18,7 @@
  * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * @(#) $Header: /home/pdw/vcvs/repos/iftop/llc.h,v 1.2 2003/06/06 22:42:35 pdw Exp $ (LBL)
+ * @(#) $Header$ (LBL)
  */
 
 /*

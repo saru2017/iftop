@@ -76,6 +76,11 @@ hash_status_enum hash_find(hash_type* hash_table, void* key, void **rec) {
 
 hash_status_enum hash_next_item(hash_type* hash_table, hash_node_type** ppnode) {
     int i;
+
+    if (hash_table == 0) {
+      return HASH_STATUS_KEY_NOT_FOUND;
+    }
+
     if(*ppnode != NULL) {
         if((*ppnode)->next != NULL) {
             *ppnode = (*ppnode)->next;
@@ -101,13 +106,16 @@ hash_status_enum hash_next_item(hash_type* hash_table, hash_node_type** ppnode) 
 void hash_delete_all(hash_type* hash_table) {
     int i;
     hash_node_type *n, *nn;
+
+    if(hash_table == 0) {
+      return;
+    }
+
     for(i = 0; i < hash_table->size; i++) {
         n = hash_table->table[i];
         while(n != NULL) {
             nn = n->next;
             hash_table->delete_key(n->key);
-			// XXX: it's not need to delete the user's data(rec) ?
-			//hash_table->delete_key(n->rec);
             free(n);
             n = nn;
         }

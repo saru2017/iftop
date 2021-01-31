@@ -8,7 +8,7 @@
  *
  */
 
-static const char rcsid[] = "$Id: stringmap.c,v 1.4 2010/11/27 11:06:12 pdw Exp $";
+static const char rcsid[] = "$Id$";
 
 
 #include <stdlib.h>

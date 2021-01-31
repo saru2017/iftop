@@ -35,7 +35,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * @(#) $Header: /home/pdw/vcvs/repos/iftop/sll.h,v 1.2 2003/06/06 22:42:35 pdw Exp $ (LBL)
+ * @(#) $Header$ (LBL)
  */
 
 /*

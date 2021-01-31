@@ -16,7 +16,7 @@
 #include "iftop.h"
 #include "options.h"
 
-static const char rcsid[] = "$Id: screenfilter.c,v 1.3 2002/11/04 12:27:35 chris Exp $";
+static const char rcsid[] = "$Id$";
 
 extern options_t options ;
 

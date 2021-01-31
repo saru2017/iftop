@@ -4,7 +4,7 @@
  *
  */
 
-static const char rcsid[] = "$Id: edline.c,v 1.2 2002/11/04 12:27:35 chris Exp $";
+static const char rcsid[] = "$Id$";
 
 #include <ctype.h>
 #include <curses.h>

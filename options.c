@@ -30,7 +30,7 @@
 
 options_t options;
 
-char optstr[] = "+i:f:nNF:G:lhpbBPm:c:";
+char optstr[] = "+i:f:nNF:G:lhpbBu:Pm:c:s:tL:o:";
 
 /* Global options. */
 
@@ -55,7 +55,7 @@ config_enumeration_type sort_enumeration[] = {
 	{ "10s", OPTION_SORT_DIV2 },
 	{ "40s", OPTION_SORT_DIV3 },
 	{ "source", OPTION_SORT_SRC },
-	{ "destination", OPTION_SORT_SRC },
+	{ "destination", OPTION_SORT_DEST },
 	{ NULL, -1 }
 };
 
@@ -72,6 +72,13 @@ config_enumeration_type showports_enumeration[] = {
 	{ "source-only", OPTION_PORTS_SRC },
 	{ "destination-only", OPTION_PORTS_DEST },
 	{ "on", OPTION_PORTS_ON },
+	{ NULL, -1 }
+};
+
+config_enumeration_type bandwidth_unit_enumeration[] = {
+	{ "bits", OPTION_BW_BITS },
+	{ "bytes", OPTION_BW_BYTES },
+	{ "packets", OPTION_BW_PKTS },
 	{ NULL, -1 }
 };
 
@@ -103,7 +110,7 @@ static char *get_first_interface(void) {
     while(nameindex[j].if_index != 0) {
         if (strcmp(nameindex[j].if_name, "lo") != 0 && !is_bad_interface_name(nameindex[j].if_name)) {
             strncpy(ifr.ifr_name, nameindex[j].if_name, sizeof(ifr.ifr_name));
-            if ((s == -1) || (ioctl(s, SIOCGIFFLAGS, &ifr) == -1) || (ifr.ifr_flags & IFF_UP)) {
+            if ((s == -1) || (ioctl(s, SIOCGIFFLAGS, &ifr) == -1) || (ifr.ifr_flags & IFF_RUNNING)) {
                 i = xstrdup(nameindex[j].if_name);
                 break;
             }
@@ -145,7 +152,7 @@ void options_set_defaults() {
     options.aggregate_dest = 0;
     options.paused = 0;
     options.showhelp = 0;
-    options.bandwidth_in_bytes = 0;
+    options.bandwidth_unit = OPTION_BW_BITS;
     options.sort = OPTION_SORT_DIV2;
     options.screenfilter = NULL;
     options.freezeorder = 0;
@@ -155,6 +162,9 @@ void options_set_defaults() {
     options.max_bandwidth = 0; /* auto */
     options.log_scale = 0;
     options.bar_interval = 1;
+    options.timed_output = 0;
+    options.no_curses = 0;
+    options.num_lines = 10;
 
     /* Figure out the name for the config file */
     s = getenv("HOME");
@@ -168,79 +178,6 @@ void options_set_defaults() {
     }
     options.config_file_specified = 0;
     
-}
-
-static void die(char *msg) {
-    fprintf(stderr, "%s", msg);
-    exit(1);
-}
-
-static void set_max_bandwidth(char* arg) {
-    char* units;
-    long long mult = 1;
-    long long value;
-    units = arg + strspn(arg, "0123456789");
-    if(strlen(units) > 1) {
-        die("Invalid units\n");
-    }
-    if(strlen(units) == 1) {
-        if(*units == 'k' || *units == 'K') {
-            mult = 1024;
-        }
-        else if(*units == 'm' || *units == 'M') {
-            mult = 1024 * 1024;
-        }
-        else if(*units == 'g' || *units == 'G') {
-            mult = 1024 * 1024 * 1024;
-        }
-    }
-    *units = '\0';
-    if(sscanf(arg, "%lld", &value) != 1) {
-        die("Error reading max bandwidth\n");
-    }
-    options.max_bandwidth = value * mult;
-}
-
-static void set_net_filter(char* arg) {
-    char* mask;
-
-    mask = strchr(arg, '/');
-    if (mask == NULL) {
-        die("Could not parse net/mask\n");
-    }
-    *mask = '\0';
-    mask++;
-    if (inet_aton(arg, &options.netfilternet) == 0)
-        die("Invalid network address\n");
-    /* Accept a netmask like /24 or /255.255.255.0. */
-    if (mask[strspn(mask, "0123456789")] == '\0') {
-        /* Whole string is numeric */
-        int n;
-        n = atoi(mask);
-        if (n > 32) {
-            die("Invalid netmask");
-        }
-        else {
-            if(n == 32) {
-              /* This needs to be special cased, although I don't fully 
-               * understand why -pdw 
-               */
-              options.netfiltermask.s_addr = htonl(0xffffffffl);
-            }
-            else {
-              u_int32_t mm = 0xffffffffl;
-              mm >>= n;
-              options.netfiltermask.s_addr = htonl(~mm);
-            }
-        }
-    } 
-    else if (inet_aton(mask, &options.netfiltermask) == 0) {
-        die("Invalid netmask\n");
-    }
-    options.netfilternet.s_addr = options.netfilternet.s_addr & options.netfiltermask.s_addr;
-
-    options.netfilter = 1;
-
 }
 
 /* usage:
@@ -258,7 +195,8 @@ static void usage(FILE *fp) {
 "   -p                  run in promiscuous mode (show traffic between other\n"
 "                       hosts on the same network segment)\n"
 "   -b                  don't display a bar graph of traffic\n"
-"   -B                  Display bandwidth in bytes\n"
+"   -B                  display bandwidth in bytes\n"
+"   -a                  display bandwidth in packets\n"
 "   -i interface        listen on named interface\n"
 "   -f filter code      use filter code to select packets to count\n"
 "                       (default: none, but only IP packets are counted)\n"
@@ -268,8 +206,20 @@ static void usage(FILE *fp) {
 "   -P                  show ports as well as hosts\n"
 "   -m limit            sets the upper limit for the bandwidth scale\n"
 "   -c config file      specifies an alternative configuration file\n"
+"   -t                  use text interface without ncurses\n"
 "\n"
-"iftop, version " IFTOP_VERSION "\n"
+"   Sorting orders:\n"
+"   -o 2s                Sort by first column (2s traffic average)\n"
+"   -o 10s               Sort by second column (10s traffic average) [default]\n"
+"   -o 40s               Sort by third column (40s traffic average)\n"
+"   -o source            Sort by source address\n"
+"   -o destination       Sort by destination address\n"
+"\n"
+"   The following options are only available in combination with -t\n"
+"   -s num              print one single text output afer num seconds, then quit\n"
+"   -L num              number of lines to print\n"
+"\n"
+"iftop, version " PACKAGE_VERSION "\n"
 "copyright (c) 2002 Paul Warren <pdw@ex-parrot.com> and contributors\n"
             );
 }
@@ -329,7 +279,27 @@ void options_read_args(int argc, char **argv) {
                 break;
 
             case 'B':
-                config_set_string("use-bytes", "true");
+                config_set_string("bandwidth-unit", "bytes");
+                break;
+
+	    case 'u':
+		config_set_string("bandwidth-unit", optarg);
+		break;
+
+            case 's':
+                config_set_string("timed-output", optarg);
+                break;
+
+            case 't':
+                config_set_string("no-curses", "true");
+                break;
+
+            case 'L':
+                config_set_string("num-lines", optarg);
+                break;
+
+            case 'o':
+                config_set_string("sort", optarg);
                 break;
 
             case 'c':
@@ -408,6 +378,23 @@ int options_config_get_promiscuous() {
             options.promiscuous_but_choosy = 0;
         }
         return 1;
+    }
+    return 0;
+}
+
+int options_config_get_bw_unit() {
+    int i;
+
+    if (options_config_get_enum("bandwidth-unit", bandwidth_unit_enumeration,
+				(int*)&options.bandwidth_unit))
+	return 1;
+    /* compatibility with use-bytes / -B */
+    if (options_config_get_bool("use-bytes", &i)) {
+	if (i)
+	    options.bandwidth_unit = OPTION_BW_BYTES;
+	else
+	    options.bandwidth_unit = OPTION_BW_BITS;
+	return 1;
     }
     return 0;
 }
@@ -586,7 +573,7 @@ void options_make() {
     options_config_get_promiscuous();
     options_config_get_bool("hide-source", &options.aggregate_src);
     options_config_get_bool("hide-destination", &options.aggregate_dest);
-    options_config_get_bool("use-bytes", &options.bandwidth_in_bytes);
+    options_config_get_bw_unit();
     options_config_get_enum("sort", sort_enumeration, (int*)&options.sort);
     options_config_get_enum("line-display", linedisplay_enumeration, (int*)&options.linedisplay);
     options_config_get_bool("show-totals", &options.show_totals);
@@ -595,6 +582,9 @@ void options_make() {
     options_config_get_enum("port-display", showports_enumeration, (int*)&options.showports);
     options_config_get_string("screen-filter", &options.screenfilter);
     options_config_get_bool("link-local", &options.link_local);
+    options_config_get_int("timed-output", &options.timed_output);
+    options_config_get_bool("no-curses", &options.no_curses);
+    options_config_get_int("num-lines", &options.num_lines);
     options_config_get_net_filter();
     options_config_get_net_filter6();
 };

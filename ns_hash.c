@@ -57,10 +57,7 @@ void ns_hash_delete_key(void* key) {
  */
 hash_type* ns_hash_create() {
     hash_type* hash_table;
-    //XXX: hash_table is a hash_type*, it's store a hash_node_type**
-	// initialise the hash_table like beside will waster 255 hash_type memory 
-	// hash_table = xcalloc(hash_table_size, sizeof *hash_table);
-    hash_table = xcalloc(1, sizeof *hash_table);
+    hash_table = xcalloc(hash_table_size, sizeof *hash_table);
     hash_table->size = hash_table_size;
     hash_table->compare = &ns_hash_compare;
     hash_table->hash = &ns_hash_hash;

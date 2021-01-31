@@ -23,4 +23,6 @@ int config_init();
 void config_set_string(const char *directive, const char* s);
 int config_get_enum(const char *directive, config_enumeration_type *enumeration, int *value);
 
+
+
 #endif /* __CFGFILE_H_ */
