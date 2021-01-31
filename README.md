@@ -30,7 +30,7 @@ LIBS = -lpcap -lm  -lncursesw -lpthread
 [ ] iftop.c <pcap.h>が見つからないと怒られるので後回し
 [o] ns_hash.c
 [o] options.c
-[ ] resolver.c
+[o] resolver.c
 [ ] screenfilter.c
 [ ] serv_hash.c
 [ ] sorted_list.c
