@@ -64,7 +64,9 @@ D958591A-208B-4156-8B62-D03B7FE5A00E
 ```
 で動いた
 
-
+```
+gcc -o iftop addr_hash.o edline.o hash.o iftop.o ns_hash.o options.o resolver.o screenfilter.o serv_hash.o sorted_list.o threadprof.o ui.o util.o addrs_ioctl.o addrs_dlpi.o dlcommon.o stringmap.o cfgfile.o vector.o Packet.lib wpcap.lib -lncursesw -lm -lpthread
+```
 
 # 履歴
 
