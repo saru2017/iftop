@@ -786,7 +786,13 @@ void ui_tick(int print) {
 }
 
 void ui_curses_init() {
+    printf("before initscr\n");
+//    setenv("TERM", "xterm", 1);
+    printf("TERM=%s\n", getenv("TERM"));
+    fflush(stdout);
     (void) initscr();      /* initialize the curses library */
+    printf("after initscr\n");
+    fflush(stdout);
     keypad(stdscr, TRUE);  /* enable keyboard mapping */
     (void) nonl();         /* tell curses not to do NL->CR/NL on output */
     (void) cbreak();       /* take input chars one at a time, no wait for \n */
@@ -804,7 +810,11 @@ void showhelp(const char * s) {
 
 void ui_init() {
     char msg[20];
+    printf("before ui_curses_init()\n");
+    fflush(stdout);
     ui_curses_init();
+    printf("after ui_curses_init()\n");
+    fflush(stdout);
     
     erase();
 

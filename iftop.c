@@ -14,13 +14,9 @@
 #include <net/if.h>
 /* include <net/bpf.h> -- this was added by the PFLOG patch but seems
  * superfluous and breaks on Slackware */
-#if defined(HAVE_PCAP_H)
-#   include <pcap.h>
-#elif defined(HAVE_PCAP_PCAP_H)
-#   include <pcap/pcap.h>
-#else
-#   error No pcap.h
-#endif
+#define HAVE_REMOTE
+//#include <pcap.h>
+#include <pcap/pcap.h>
 
 #include <pthread.h>
 #include <curses.h>
@@ -794,7 +790,7 @@ int main(int argc, char **argv) {
       if (i == 0)
       {
         printf("\nNo interfaces found! Make sure WinPcap is installed.\n");
-        return;
+        return -1;
       }
 
       /* We don't need any more the device list. Free it */
@@ -820,8 +816,11 @@ int main(int argc, char **argv) {
     packet_init();
 
     init_history();
-
+    printf("before ui_init\n");
+    fflush(stdout);
     ui_init();
+    printf("after ui_init\n");
+    fflush(stdout);
 
     pthread_create(&thread, NULL, (void*)&packet_loop, NULL);
 
