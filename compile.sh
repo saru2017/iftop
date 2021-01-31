@@ -5,7 +5,6 @@ gcc -c cfgfile.c -o cfgfile.o
 gcc -c dlcommon.c -o dlcommon.o
 gcc -c edline.c -o edline.o
 gcc -c hash.c -o hash.o
-gcc -c hostentp_ghba_r.c -o hostentp_ghba_r.o
 gcc -c iftop.c -o iftop.o -I./include
 gcc -c int_ghba_r.c -o int_ghba_r.o
 gcc -c ns_hash.c -o ns_hash.o
