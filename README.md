@@ -31,18 +31,18 @@ LIBS = -lpcap -lm  -lncursesw -lpthread
 [o] ns_hash.c
 [o] options.c
 [o] resolver.c
-[ ] screenfilter.c
-[ ] serv_hash.c
-[ ] sorted_list.c
-[ ] threadprof.c
-[ ] ui.c
-[ ] util.c
-[ ] addrs_ioctl.c
-[ ] addrs_dlpi.c
-[ ] dlcommon.c
-[ ] stringmap.c
-[ ] cfgfile.c
-[ ] vector.c
+[o] screenfilter.c
+[o] serv_hash.c
+[o] sorted_list.c
+[o] threadprof.c
+[o] ui.c
+[o] util.c
+[o] addrs_ioctl.c
+[o] addrs_dlpi.c
+[o] dlcommon.c
+[o] stringmap.c
+[o] cfgfile.c
+[o] vector.c
 
 
 
