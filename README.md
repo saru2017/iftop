@@ -27,7 +27,7 @@ LIBS = -lpcap -lm  -lncursesw -lpthread
 
 [o] addr_hash.c
 [o] edline.c hash.c
-[ ] iftop.c <pcap.h>が見つからないと怒られるので後回し
+[o] iftop.c <pcap.h>が見つからないと怒られるので後回し
 [o] ns_hash.c
 [o] options.c
 [o] resolver.c
