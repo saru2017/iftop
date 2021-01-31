@@ -26,7 +26,8 @@ LIBS = -lpcap -lm  -lncursesw -lpthread
 ## オブジェクトファイル生成
 
 [o] addr_hash.c
-[o] edline.c hash.c
+[o] edline.c
+[o] hash.c
 [o] iftop.c <pcap.h>が見つからないと怒られるので後回し
 [o] ns_hash.c
 [o] options.c
@@ -44,6 +45,18 @@ LIBS = -lpcap -lm  -lncursesw -lpthread
 [o] cfgfile.c
 [o] vector.c
 
+
+## リンク
+
+```
+gcc -o iftop addr_hash.o edline.o hash.o iftop.o ns_hash.o options.o resolver.o screenfilter.o serv_hash.o sorted_list.o threadprof.o ui.o util.o addrs_ioctl.o addrs_dlpi.o dlcommon.o stringmap.o cfgfile.o vector.o
+```
+
+↓であと一息な感じ
+
+```
+ gcc -o iftop addr_hash.o edline.o hash.o iftop.o ns_hash.o options.o resolver.o screenfilter.o serv_hash.o sorted_list.o threadprof.o ui.o util.o addrs_ioctl.o addrs_dlpi.o dlcommon.o stringmap.o cfgfile.o vector.o -lncursesw -lm -lpthread
+```
 
 
 # 履歴
