@@ -265,6 +265,8 @@ static void handle_ip_packet(struct ip* iptr, int hw_dir, int pld_len)
     struct ip6_hdr* ip6tr = (struct ip6_hdr *) iptr;
 
     memset(&ap, '\0', sizeof(ap));
+    printf("pld_len = %d\n", pld_len);
+    fflush(stdout);
 
     tick(0);
 
